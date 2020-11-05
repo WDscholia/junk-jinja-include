@@ -1,15 +1,18 @@
 <html>
-
-  
-  <head>
-    <script type="text/javascript" src="{{ url_for('static', filename='jquery.dataTables.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='scholia.js') }}"></script>
-
-    <script type="text/javascript">
-      
-      query = `{% include 'describe.sparql' %}`
-
-    </script>
+    {% macro filename_to_sparql(filename, variable) -%}
+    {{ variable }} = `{% include filename %}`;
+    filename = "{{ filename }}";
+    {%- endmacro %}
+    
+    <head>
+	<script type="text/javascript" src="https://scholia.toolforge.org/static/jquery.dataTables.min.js') }}"></script>
+	<script type="text/javascript" src="https://scholia.toolforge.org/static/scholia.js"></script>
+	
+	<script type="text/javascript">
+	 
+	 {{ filename_to_sparql('describe.sparql', 'hallo') }}
+	 
+	</script>
 
   </head>
 
