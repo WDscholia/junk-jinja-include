@@ -1,7 +1,7 @@
-{% macro filename_to_sparql(variable) -%}
-console.log('{{ variable }}');
-{{ variable }}Sparql = `{% include variable + '.sparql' %}`;
-filename = "{{ variable }}.sparql";
+{% macro filename_to_sparql(panel) -%}
+console.log('{{ panel }}');
+{{ panel }}Sparql = `{% include panel + '.sparql' %}`;
+filename = "{{ panel }}.sparql";
 {%- endmacro %}
 
 <html>
