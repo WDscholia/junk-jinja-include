@@ -1,0 +1,6 @@
+# Tool: scholia
+# Title: Works about the topic
+SELECT ?work ?workLabel {
+  ?work wdt:P921 wd:{{ q }} .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,da,de,es,fr,jp,nl,no,ru,sv,zh". }
+}

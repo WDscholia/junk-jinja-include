@@ -1,121 +1,27 @@
-{% macro filename_to_sparql(panel) -%}
-console.log('{{ panel }}');
-{{ panel }}Sparql = `{% include panel + '.sparql' %}`;
-filename = "{{ panel }}.sparql";
-{%- endmacro %}
+{% extends "base.html" %}
 
-<html>
-    
-    <head>
-	<script type="text/javascript"
-src="https://scholia.toolforge.org/static/jquery.min.js"></script>
-	<script type="text/javascript"
-		src="https://scholia.toolforge.org/static/jquery.dataTables.min.js"></script>
-	<script type="text/javascript"
-src="https://scholia.toolforge.org/static/scholia.js"></script>
-	<script type="text/javascript"
-src="https://query.wikidata.org/js/shim.min.6d0a3b4d4b50e4f73d3e.js"></script>
-	<script type="text/javascript"
-src="https://query.wikidata.org/js/vendor.min.d272dcadbbd20556e12c.js"></script>
-	<script type="text/javascript"
-src="https://query.wikidata.org/js/wdqs.min.4d1b1a6bf1b7ffcd09f3.js"></script>	
+{% set aspect = "topic" %}
 
-	<link rel="stylesheet" type="text/css"
-	      href="https://scholia.toolforge.org/static/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css"
-	      href="https://scholia.toolforge.org/static/jquery.dataTables.min.css">
-	<link rel="stylesheet" type="text/css"
-	      href="https://scholia.toolforge.org/static/css/scholia.css">
-	<link rel="stylesheet" type="text/css"
-	      href="https://scholia.toolforge.org/static/css/scholia.css">
-	
-	<script type="text/javascript">
+{% block scripts %}
+{{ super() }}
 
-	 function sparqlToIframe(sparql, element) {
-	     console.log(sparql);
-	     url = "https://query.wikidata.org/embed.html#" + encodeURIComponent(sparql);
-	     console.log(url);
-	     $(element).attr('src', url);
-	 };
+<script type="text/javascript">
+
+  $(document).ready(function() {
+      
+      {{ sparql_to_table('works') }}
+      
+  });
+
+</script>
 	 
-	 function sparqlToDataTable2(sparql, element, filename, options={}) {
-	     // Options: linkPrefixes={}, paging=true
-	     var linkPrefixes = (typeof options.linkPrefixes === 'undefined') ? {} : options.linkPrefixes;
-	     var paging = (typeof options.paging === 'undefined') ? true : options.paging;
-	     var sDom = (typeof options.sDom === 'undefined') ? 'lfrtip' : options.sDom;
-	     var url = "https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=" + 
-		       encodeURIComponent(sparql) + '&format=json';
-	     
-	     $.getJSON(url, function(response) {
-		 var simpleData = sparqlDataToSimpleData(response);
-		 
-		 convertedData = convertDataTableData(simpleData.data, simpleData.columns, linkPrefixes=linkPrefixes);
-		 columns = [];
-		 for ( i = 0 ; i < convertedData.columns.length ; i++ ) {
-		     var column = {
-			 data: convertedData.columns[i],
-			 title: capitalizeFirstLetter(convertedData.columns[i]).replace(/_/g, "&nbsp;"),
-			 defaultContent: "",
-		     }
-		     columns.push(column)
-		 }
+{% endblock %}
 
-		 table = $(element).DataTable({ 
-		     data: convertedData.data,
-		     columns: columns,
-		     lengthMenu: [[10, 25, 100, -1], [10, 25, 100, "All"]],
-		     ordering: true,
-		     order: [], 
-		     paging: paging,
-		     sDom: sDom,
-		 });
 
-		 $(element).append(
-		     '<caption><a href="https://query.wikidata.org/#' + 
-		     encodeURIComponent(sparql) +    
-		     '">Wikidata Query Service</a>. <a href="https://github.com/WDscholia/junk-jinja-include/blob/master/templates/' +
-		     filename + '">' +
-		     filename +
-		     '</a>.</caption>'
-		 );
-	     });
-	 };
+{% block content %}
 
-	 {{ filename_to_sparql('describe') }}
+<h2>Table</h2>
 
-	 $(document).ready(function() {
-	     console.log('ready function');
-	     sparqlToDataTable2(describeSparql, "#describe-table", filename);
-	     sparqlToIframe(`{% include 'describe_iframe.sparql' %}`, "#describe-iframe");
-	     console.log('ready function end');
-	 });
-	 
-	</script>
+<table class="table table-hover" id="works-table"></table>
 
-    </head>
-
-    <body>
-	{{ q }}
-
-	<a href="/author/Q20980928">Finn</a>.
-	<a href="/topic/Q2013">Wikidata</a>
-	
-
-	<h2>Table</h2>
-	<table class="table table-hover" id="describe-table"></table>
-
-	<h2>Iframe</h2>
-
-	<div class="embed-responsive embed-responsive-4by3">
-	    <iframe class="embed-responsive-item" id="describe-iframe" src=""></iframe>
-	</div>
-	
-	<h2>Iframe</h2>
-
-	<div class="embed-responsive embed-responsive-4by3">
-	    <iframe class="embed-responsive-item" src="https://query.wikidata.org/embed.html#%23defaultView%3ABubbleChart%0ASELECT%20%3Fcount%20%3Fvenue%20%28SAMPLE%28%3Fvenue_label_%29%20AS%20%3Fvenue_label%29%20%0AWITH%20%7B%0A%20%20SELECT%20%28COUNT%28%3Fwork%29%20as%20%3Fcount%29%20%3Fvenue%20WHERE%20%7B%0A%20%20%20%20%3Fwork%20wdt%3AP50%20wd%3A{{ q }}%20.%0A%20%20%20%20%3Fwork%20wdt%3AP1433%20%3Fvenue%20.%0A%20%20%7D%0A%20%20GROUP%20BY%20%3Fvenue%0A%7D%20AS%20%25counts%0AWHERE%20%7B%0A%20%20INCLUDE%20%25counts%0A%20%20%3Fvenue%20rdfs%3Alabel%20%3Flong_venue_label%20FILTER%28LANG%28%3Flong_venue_label%29%20%3D%20%27en%27%29%0A%20%20OPTIONAL%20%7B%20%3Fvenue%20wdt%3AP1813%20%3Fshort_name%20.%20%7D%0A%20%20BIND%28COALESCE%28%3Fshort_name%2C%20%3Flong_venue_label%29%20AS%20%3Fvenue_label_%29%0A%7D%0AGROUP%20BY%20%3Fvenue%20%3Fcount%0AORDER%20BY%20DESC%28%3Fcount%29%20%20"></iframe>
-</div>
-	
-    </body>
-    
-</html>
+{% endblock %}

@@ -1,0 +1,6 @@
+# Tool: scholia
+# Title: List of works for the author
+SELECT * {
+  ?work wdt:P50 wd:{{ q }} ;
+        wdt:P577 ?datetimes .
+}

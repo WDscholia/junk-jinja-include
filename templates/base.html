@@ -1,0 +1,112 @@
+{% macro sparql_to_table(panel, options={}) -%}
+// {{ panel }} table
+            sparqlToDataTable2(`
+{% include aspect + '_' + panel + '.sparql' %}
+            `,
+            "#{{ panel }}-table", "{{ aspect }}_{{ panel }}.sparql",
+            options={{ options }});
+{%- endmacro %}
+
+{% macro sparql_to_iframe(panel) -%}
+// {{ panel }} iframe
+        sparqlToIframe(
+            `{% include aspect + '_' + panel + '.sparql' %}`,
+            "#{{ panel }}-iframe", "{{ aspect }}_{{ panel }}.sparql");
+{%- endmacro %}
+
+
+<html>
+    
+  {% block head %}
+  
+  <link rel="stylesheet" type="text/css"
+	href="https://scholia.toolforge.org/static/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css"
+	href="https://scholia.toolforge.org/static/jquery.dataTables.min.css">
+  <link rel="stylesheet" type="text/css"
+	href="https://scholia.toolforge.org/static/css/scholia.css">
+  
+  <script type="text/javascript"
+	  src="https://scholia.toolforge.org/static/jquery.min.js"></script>
+  <script src="https://scholia.toolforge.org/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript"
+	  src="https://scholia.toolforge.org/static/jquery.dataTables.min.js"></script>
+  <script type="text/javascript"
+	  src="https://scholia.toolforge.org/static/scholia.js"></script>
+
+  {% endblock %}
+
+
+  {% block scripts %}
+  
+  <script type="text/javascript">
+    
+    function sparqlToIframe(sparql, element, filename) {
+	url = "https://query.wikidata.org/embed.html#" + encodeURIComponent(sparql);
+	$(element).attr('src', url);
+	$(element).parent().after('<span style="float:right; font-size:smaller"><a href="' + filename + '">' + filename + '</a></span>');
+    };
+    
+    function sparqlToDataTable2(sparql, element, filename, options={}) {
+	// Options: linkPrefixes={}, paging=true
+	  var linkPrefixes = (typeof options.linkPrefixes === 'undefined') ? {} : options.linkPrefixes;
+	  var paging = (typeof options.paging === 'undefined') ? true : options.paging;
+	  var sDom = (typeof options.sDom === 'undefined') ? 'lfrtip' : options.sDom;
+	  var url = "https://query.wikidata.org/sparql?query=" + 
+	      encodeURIComponent(sparql) + '&format=json';
+	  
+	  $.getJSON(url, function(response) {
+	      var simpleData = sparqlDataToSimpleData(response);
+	      
+	      convertedData = convertDataTableData(simpleData.data, simpleData.columns, linkPrefixes=linkPrefixes);
+	      columns = [];
+	      for ( i = 0 ; i < convertedData.columns.length ; i++ ) {
+		     var column = {
+			 data: convertedData.columns[i],
+			 title: capitalizeFirstLetter(convertedData.columns[i]).replace(/_/g, "&nbsp;"),
+			 defaultContent: "",
+		     }
+		     columns.push(column)
+		 }
+
+		 var table = $(element).DataTable({ 
+		     data: convertedData.data,
+		     columns: columns,
+		     lengthMenu: [[10, 25, 100, -1], [10, 25, 100, "All"]],
+		     ordering: true,
+		     order: [], 
+		     paging: paging,
+		     sDom: sDom,
+		 });
+
+		 $(element).append(
+		     '<caption><span style="float:left; font-size:smaller;"><a href="https://query.wikidata.org/#' + 
+		     encodeURIComponent(sparql) +    
+			 '">Wikidata Query Service</a></span>' +
+			 '<span style="float:right; font-size:smaller;"><a href="https://github.com/WDscholia/junk-jinja-include/blob/master/templates/' +
+		     filename + '">' +
+			 filename.replace("_", ": ") +
+		     '</a></span></caption>'
+		 );
+	     });
+	 };
+
+    </script>
+
+    {% endblock %}
+
+    </head>
+
+
+    <body>
+
+      <div class="container">
+      
+	<a href="/">Home</a> | <a href="/author/Q20980928">Nielsen</a> | <a href="/topic/Q2013">Wikidata</a>
+
+	{% block content %}{% endblock %}
+
+      </div>
+	
+    </body>
+

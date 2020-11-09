@@ -18,4 +18,4 @@ def show_topic(q='Q2013'):
   return render_template('topic.html', q=q)
 
 
-app.run()
+app.run(debug=True)

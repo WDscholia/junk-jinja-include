@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% set aspect = "author" %}
+
+
+{% block scripts %}
+{{ super() }}
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+      
+      {{ sparql_to_table('describe') }}
+      
+      {{ sparql_to_table('list-of-works') }}
+      
+      {{ sparql_to_iframe('describe-graph') }}
+      
+  });
+
+</script>
+	 
+{% endblock %}
+
+
+{% block content %}
+
+<h2>Describe</h2>
+<table class="table table-hover" id="describe-table"></table>
+
+<h2><a name="list-of-works">List of works</a></h2>
+<table class="table table-hover" id="list-of-works-table"></table>
+
+<h2><a name="describe-graph">Describe</a></h2>
+
+<div class="embed-responsive embed-responsive-4by3">
+  <iframe class="embed-responsive-item" id="describe-graph-iframe"></iframe>
+</div>
+
+<hr>
+
+{% endblock %}
