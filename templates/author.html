@@ -3,23 +3,14 @@
 {% set aspect = "author" %}
 
 
-{% block scripts %}
-{{ super() }}
+{% block inready %}
+      
+{{ sparql_to_table('describe') }}
 
-<script type="text/javascript">
+{{ sparql_to_table('list-of-works') }}
 
-  $(document).ready(function() {
+{{ sparql_to_iframe('describe-graph') }}
       
-      {{ sparql_to_table('describe') }}
-      
-      {{ sparql_to_table('list-of-works') }}
-      
-      {{ sparql_to_iframe('describe-graph') }}
-      
-  });
-
-</script>
-	 
 {% endblock %}
 
 

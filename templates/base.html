@@ -1,17 +1,17 @@
 {% macro sparql_to_table(panel, options={}) -%}
 // {{ panel }} table
-            sparqlToDataTable2(`
+sparqlToDataTable2(`
 {% include aspect + '_' + panel + '.sparql' %}
-            `,
-            "#{{ panel }}-table", "{{ aspect }}_{{ panel }}.sparql",
-            options={{ options }});
+`,
+"#{{ panel }}-table", "{{ aspect }}_{{ panel }}.sparql",
+ options={{ options }});
 {%- endmacro %}
 
 {% macro sparql_to_iframe(panel) -%}
 // {{ panel }} iframe
-        sparqlToIframe(
-            `{% include aspect + '_' + panel + '.sparql' %}`,
-            "#{{ panel }}-iframe", "{{ aspect }}_{{ panel }}.sparql");
+sparqlToIframe(
+`{% include aspect + '_' + panel + '.sparql' %}`,
+"#{{ panel }}-iframe", "{{ aspect }}_{{ panel }}.sparql");
 {%- endmacro %}
 
 
@@ -91,8 +91,15 @@
 			 filename.replace("_", ": ") +
 		     '</a></span></caption>'
 		 );
-	     });
-	 };
+	  });
+    };
+
+    $(document).ready(function() {
+	
+	{% block inready %}{% endblock %}
+	
+    });
+
 
     </script>
 
