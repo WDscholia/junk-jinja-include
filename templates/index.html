@@ -10,10 +10,10 @@
 
   $(document).ready(function() {
       
-      console.log('ready');
-      
       {{ sparql_to_table('describe') }}
       
+      {{ sparql_to_iframe('describe-graph') }}
+
   });
 
 </script>
@@ -31,7 +31,7 @@
 <h2>Describe graph</h2>
 
 <div class="embed-responsive embed-responsive-4by3">
-  <iframe class="embed-responsive-item" id="describe-iframe" src=""></iframe>
+  <iframe class="embed-responsive-item" id="describe-graph-iframe"></iframe>
 </div>
 
 {% endblock %}

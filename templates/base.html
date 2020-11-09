@@ -44,7 +44,10 @@
     function sparqlToIframe(sparql, element, filename) {
 	url = "https://query.wikidata.org/embed.html#" + encodeURIComponent(sparql);
 	$(element).attr('src', url);
-	$(element).parent().after('<span style="float:right; font-size:smaller"><a href="' + filename + '">' + filename + '</a></span>');
+	$(element).parent().after(
+	    '<span style="float:right; font-size:smaller"><a href="https://github.com/WDscholia/junk-jinja-include/blob/master/templates/' + filename + '">' +
+		filename.replace("_", ": ") +
+		'</a></span>');
     };
     
     function sparqlToDataTable2(sparql, element, filename, options={}) {
