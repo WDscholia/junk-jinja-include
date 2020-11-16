@@ -4,7 +4,7 @@ sparqlToDataTable2(`
 {% include aspect + '_' + panel + '.sparql' %}
 `,
 "#{{ panel }}-table", "{{ aspect }}_{{ panel }}.sparql",
- options={{ options }});
+ options={{ options | tojson }});
 {%- endmacro %}
 
 {% macro sparql_to_iframe(panel) -%}
